@@ -1,86 +1,51 @@
-#Gonzalez Rocha Jacobo Jehu
-#Moreno Garcia Fernando Israel
-#Sotelo Palacios Miguel Angel 
-
-from fastapi import FastAPI
+import petl as etl
 import psycopg2
+import sqlalchemy
+import pyexcel as p
 import datetime as d
+import decimal as c
+def func(val, row):
+    s = str(row.FECHA)
 
-app = FastAPI()
+    return s[0:11]
+
+# Press the green button in the gutter to run the script.
+if __name__ == '__main__':
 
 
-result = []
-
-@app.get("/getDataByDate/{date}")
-async def read_item(date: str, col: str):
     try:
-        conn = psycopg2.connect(dbname="imecas", user="postgres", password="")
-        cur = conn.cursor()
-        result.clear()
-        s=date[2:4]
-        col = col.upper()
-        query = "SELECT "+'"FECHA",'+'"HORA",'+ '"'+col +'"'+ "FROM public."+'"CO-'+s+'"'+" WHERE "+'"FECHA"'+" = '"+date+"'"
-        cur.execute(query)
+        xlx =  etl.io.xls.fromxls("C:/Users/jehu/Downloads/22RAMA/2022CO.xls")
+        print(xlx)
+        print("hola")
+        aire = etl.io.xlsx.fromxlsx("C:/Users/jehu/Downloads/IMECAS/2015CO.xlsx", max_col=38, read_only=True)
 
-        twple = cur.fetchall()
-        i=0
-        for i in range(len(twple)):
-            dicty = {"date: ": twple[i][0], "hour: ": twple[i][1], col: twple[i][2]}
-            result.append(dicty)
-            i=i+1
+        # fecha = etl.convert(aire,'ACO','AJM','ATI','BJU','CAM','CCA','CHO','CUA','FAC','HGM','INN','IZT','LLA','LPR','MER','MGH','MON','NEZ','PED','SAG','SFE','SJA','TAH','TLA','TLI','UAX','UIZ','VIF','XAL', float)
 
-        cur.close()
-        conn.close()
-        return {"message": result}
-    except(Exception, psycopg2.Error) as e:
-            return {'message': 'error de conexion '+str(e)+query}
+       # aire = etl.convert(aire,'FECHA', func, pass_row=True)
+        aire = etl.convert(aire, 'FECHA', d.datetime.date)
+        aire = etl.convert(aire, 'HORA', d.time)
+        aire = etl.cut(aire, 'FECHA', 'HORA', 'ACO', 'AJM', 'ATI', 'CAM', 'CCA', 'CHO', 'CUA', 'FAC', 'HGM',
+                        'INN', 'IZT', 'LLA', 'LPR', 'MER', 'MGH', 'MON', 'NEZ', 'PED', 'SAG', 'SFE', 'SJA', 'TAH',
+                        'TLA', 'TLI', 'UAX', 'UIZ', 'VIF', 'XAL')
+        #etl.tocsv(aire, "C:/Users/jehu/Downloads/O3/2015O3.csv")
 
-@app.get("/getDataByState/{state}")
-async def read_item(state: str, tipo_v: str):
-    try:
-        conn = psycopg2.connect(dbname="vehiculos", user="postgres", password="")
-        cur = conn.cursor()
-        result.clear()
-        state = state.title()
-        t = tipo_v[0:1]
-        t = t.upper()
-        query = "SELECT "+'"ESTADO","'+t+'_SUMA","'+t+'_OFICIAL","'+t+ '_PUBLICO","'+t+'_PARTICULAR"'+" FROM public.vehiculos where "+'"ESTADO" = ' "'"+state+"'"
-        cur.execute(query)
+        i=16
+        while i != 22:
+            fecha = etl.io.xlsx.fromxlsx("C:/Users/jehu/Downloads/IMECAS/20"+str(i)+"CO.xlsx", max_col=38,read_only=True)
 
-        twple = cur.fetchall()
-        i=0
-        for i in range(len(twple)):
-            dicty = {"ESTADO: ": twple[i][0], t+"_SUMA": twple[i][1], t+"_OFICIAL": twple[i][2], t+"_PUBLICO": twple[i][3], t+"_PARTICULAR": twple[i][4]}
-            result.append(dicty)
-            i=i+1
+            #fecha = etl.convert(aire,'ACO','AJM','ATI','BJU','CAM','CCA','CHO','CUA','FAC','HGM','INN','IZT','LLA','LPR','MER','MGH','MON','NEZ','PED','SAG','SFE','SJA','TAH','TLA','TLI','UAX','UIZ','VIF','XAL', float)
 
-        cur.close()
-        conn.close()
-        return {"message": result}
-    except(Exception, psycopg2.Error) as e:
-        return {'message': 'error de conexion ' + str(e) + query}
+            #fecha = etl.convert(fecha,'FECHA', func, pass_row=True)
+            fecha = etl.cut(fecha,'FECHA','HORA','ACO','AJM','ATI','CAM','CCA','CHO','CUA','FAC','HGM','INN','IZT','LLA','LPR','MER','MGH','MON','NEZ','PED','SAG','SFE','SJA','TAH','TLA','TLI','UAX','UIZ','VIF','XAL')
+            fecha = etl.convert(fecha, 'FECHA', d.datetime.date)
+            fecha = etl.convert(fecha, 'HORA', d.time)
+            aire = etl.mergesort(aire,fecha, key='FECHA')
 
-@app.get("/getDataByYear/{year}")
-async def read_item(year: int, zona: str):
-    try:
-        conn = psycopg2.connect(dbname="accidentes", user="postgres", password="")
-        cur = conn.cursor()
-        result.clear()
 
-        query = "select "+'"Tipo","'+str(year)+'" from "'+zona+'"'
+            #etl.tocsv(fecha, "C:/Users/jehu/Downloads/CO/20"+str(i)+"CO.csv")
+            print(aire)
+            i += 1
 
-        cur.execute(query)
-
-        twple = cur.fetchall()
-
-        i = 0
-        for i in range(len(twple)):
-            dicty = {"Tipo: ": twple[i][0], "Cantidad": twple[i][1]}
-            result.append(dicty)
-            i = i + 1
-
-        cur.close()
-        conn.close()
-        return {"message": result}
-    except(Exception, psycopg2.Error) as e:
-        return {'message': 'error de conexion ' + str(e) + query}
+    except Exception as e:
+        print('couldn open file ' + str(e))
+    etl.tocsv(aire, "C:/Users/jehu/Downloads/CO/20" + str(i) + "TO.csv")
