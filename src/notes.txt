@@ -1,0 +1,44 @@
+ const [copies,setCopies]=useState([
+    ["id","copies"]
+  ])
+
+  const [datos,setDatos]=useState([
+  <tr>
+    <th>id</th>
+    <th>address</th>
+    <th>film</th>
+    <th>copies</th>
+  </tr>
+  ])
+  useEffect( () => {
+    const url="http://127.0.0.1:8000/getTotalCopies/";
+    const request=fetch(url);
+    request
+    .then(datos=>datos.json())
+    .then(read=>{
+      //console.log(read.TotalCopies[0].id);
+      //perra madre, no cargaban porque en el puto python tenia el string 
+      //con dos putos perros puntos al final
+      //en lugar de 'title' decia 'title:'
+      read.TotalCopies.map((person)=>{
+        setDatos((e)=>
+        [...e,
+           
+             <tr key={person.id}>
+              <td>{person.id} </td>
+              <td>{person.address}</td>
+              <td>{person.title}</td>
+              <td>{person.copies}</td>
+            </tr>
+          
+       ])
+       setCopies((e)=>
+       [...e,
+        [parseInt(person.id),
+        parseInt(person.copies)]
+      ])
+   
+      })
+    })
+    .catch(()=>console.log("Error"))
+  }, [])3   
