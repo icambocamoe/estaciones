@@ -1,17 +1,17 @@
-import { useState } from 'react';
+
 import Estaciones from './Estaciones';
+import Regression from './Regression';
 import './App.css';
 
 function App() {
  
 
   return (
-    <>
-   
-    
+    <>  
+     
+    <Regression/>
     <Estaciones />
-    <Estaciones/>
-    
+    <Estaciones />
      {/*
      <br/>{maxValues}
      <table border = "1">

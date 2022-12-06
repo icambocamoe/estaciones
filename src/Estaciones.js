@@ -21,10 +21,10 @@ const Estaciones =()=>{
     { label: "Miguel Hidalgo", value: "mgh" },
     { label: "Montecillo", value: "mon" },
     { label: "Nezahualcóyotl", value: "nez" },
-    { label: "Pedregal", value: "ped" },
+    { label: "Pedregal", value: "ped" }, 
     { label: "San Agustín", value: "sag" },
     { label: "Santa Fe", value: "sfe" },
-    { label: "sja", value: "sja" },
+    { label: "San Juan de Aragón", value: "sja" },
     { label: "Tláhuac", value: "tah" },
     { label: "Tlalnepantla", value: "tla" },
     { label: "Tultitlán", value: "tli" },
@@ -75,7 +75,7 @@ const Estaciones =()=>{
       <select 
         name="stations" id="stations" 
         style={{margin: "10px", width: "30%"}} 
-        onChange={
+        onClick={
         event => {
           empty(event.target.value);
           selection();
@@ -86,8 +86,7 @@ const Estaciones =()=>{
       </select>
       <select
       name="fecha" id="fecha" 
-      onChange={
-        
+      onClick={
         event => {
           setFecha(event.target.value);
           empty(event.target.value);
@@ -101,7 +100,6 @@ const Estaciones =()=>{
         <option value="2019">2019</option>
         <option value="2020">2020</option>
         <option value="2021">2021</option>
-        <option value="2022">2022</option>
       </select>
       </>
   )
