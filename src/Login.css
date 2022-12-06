@@ -1,0 +1,19 @@
+.container {
+    justify-content: center;
+    height: 400px;
+    
+     
+  }
+.row{
+    background-color: blueviolet;
+    opacity: 0.9;
+    border-radius: 25px;
+    padding: 40px;
+    
+}
+body{
+    background-image: url("341538.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+    

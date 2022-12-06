@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./Login.css"
 import {  useNavigate  } from "react-router-dom";
 import {
   Container,
@@ -29,13 +30,13 @@ const Login = () => {
     const onLoginClick = () => {
       console.log(info)
       if(info.username === "admin")
-        navigate('./App');
-      else
         navigate('./Home');
+      else
+        navigate('./App');
     };
   
     return (
-      <Container>
+      <Container  >
         <Row>
           <Col md="4">
             <h1>Login</h1>
@@ -52,7 +53,7 @@ const Login = () => {
               </Form.Group>
 
               <Form.Group controlId="password">
-                <Form.Label>Your password</Form.Label>
+                <Form.Label>Password</Form.Label>
                 <Form.Control
                   type="password"
                   name="password"
