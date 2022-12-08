@@ -184,4 +184,26 @@ async def read_item(estacion: str, year: str):
     except(Exception, psycopg2.Error) as e:
         return {'message': 'error de conexion '+str(e)}
 
+@app.get('/getRegressionValues/{estacion}&{month}&{day}')
+async def read_item(estacion: str, month: int, day: int,):
+    # listo
+    try:
+        conn = psycopg2.connect(dbname="imecas", user="postgres", password="")
+        result.clear()
+        cur = conn.cursor()
+        cur.execute('select ROW_NUMBER () OVER (ORDER BY "fecha"),'+str(estacion)+',"fecha" from "fullprops" where extract(month from "fecha") = '+str(month)+' and extract(day from "fecha") = '+str(day))
+        twple = cur.fetchall()
+
+        i=0
+        for i in range(len(twple)):
+            dicty = {"row": twple[i][0],"estacion": twple[i][1],"fecha": twple[i][2]}
+            result.append(dicty)
+            i=i+1
+
+        cur.close()
+        conn.close()
+        return {'RegressionValues': result}
+    except(Exception, psycopg2.Error) as e:
+        return {'message': 'error de conexion '+str(e)}
+
 
