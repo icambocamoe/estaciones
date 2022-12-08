@@ -1,3 +1,14 @@
+ event => {
+          empty(event.target.value);
+          selection();
+          setSelected(event.target.value);}
+          
+        event => {
+          setFecha(event.target.value);
+          empty(event.target.value);
+          selection();
+        }
+ 
  const [copies,setCopies]=useState([
     ["id","copies"]
   ])

@@ -1,36 +1,7 @@
 import React, { useState} from 'react';
-
+import stations from './Stations';
 const Regression = () => {
-    const stations = [
-        { label: "Acolman", value: "aco" },
-        { label: "Ajusco Medio", value: "ajm" },
-        { label: "Atizapán", value: "ati" },
-        { label: "Camarones", value: "cam" },
-        { label: "Centro de Ciencias de la Atmósfera", value: "cca" },
-        { label: "Chalco", value: "cho" },
-        { label: "Cuajimalpa", value: "cua" },
-        { label: "FES Acatlán", value: "fac" },
-        { label: "Hospital General de México", value: "hgm" },
-        { label: "Camarones", value: "inn" },
-        { label: "Centro de Ciencias de la Atmósfera", value: "izt" },
-        { label: "Laboratorio de Análisis Ambiental", value: "lla" },    
-        { label: "La Presa", value: "lpr" },
-        { label: "Merced", value: "mer" },
-        { label: "Miguel Hidalgo", value: "mgh" },
-        { label: "Montecillo", value: "mon" },
-        { label: "Nezahualcóyotl", value: "nez" },
-        { label: "Pedregal", value: "ped" }, 
-        { label: "San Agustín", value: "sag" },
-        { label: "Santa Fe", value: "sfe" },
-        { label: "San Juan de Aragón", value: "sja" },
-        { label: "Tláhuac", value: "tah" },
-        { label: "Tlalnepantla", value: "tla" },
-        { label: "Tultitlán", value: "tli" },
-        { label: "UAM Xochimilco", value: "uax" },
-        { label: "UAM Iztapalapa", value: "uiz" },
-        { label: "Villa de las Flores", value: "vif" },
-        { label: "Xalostoc", value: "xal" },
-    ];
+    
 
     const current = new Date();
     const month = current.getMonth()+1;
@@ -53,6 +24,13 @@ const Regression = () => {
                   parseFloat(station.estacion)],
               ]
             )
+            setDatos((e)=>
+              [...e,
+                  <tr key={station.row}>
+                    <td>{station.fecha} </td>
+                    <td>{station.estacion}</td>
+                  </tr>
+            ])
           })
         })
         .catch(()=>console.log(url))
@@ -79,10 +57,24 @@ const Regression = () => {
         beta1 = (regressionValues.length * sigmaxy - sigmax * sigmay) / (regressionValues.length * sigmax2 - sigmax * sigmax);
         beta0 = (sigmay - beta1 * sigmax) / regressionValues.length;
         
-        setYhat(((beta0+(beta1*(regressionValues.length+1)))/5.5).toFixed(2));
+        setYhat(((beta0+(beta1*(8)))).toFixed(2));
         setRegressionValues([]);
        }
        
+       const [datos,setDatos]=useState([
+        <tr>
+          <th>fecha</th>
+          <th>medida mas alta</th>
+        </tr>
+        ])
+        const empty = (e) =>{
+          setDatos([
+            <tr>
+              <th>año</th>
+              <th>medida</th>
+            </tr>
+          ]);
+        }
       
   return (
     <>
@@ -94,13 +86,16 @@ const Regression = () => {
             
             setSelected(event.target.value);
             selection(event.target.value);
-            
+            empty();
         }
         
     }>
         {stations.map((e,index)=><option key={index} value={e.value} >{e.label}</option> )}
     </select>
     Prediccion del dia de hoy: {yhat}
+    <table style={{backgroundColor: 'DarkTurquoise', opacity: 0.7}}>
+      {datos}
+    </table>
   </>
   )
 }
