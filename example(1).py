@@ -6,6 +6,9 @@ from fastapi import FastAPI
 import psycopg2
 import datetime as d
 from starlette.middleware.cors import CORSMiddleware
+import requests
+import json
+from bs4 import BeautifulSoup
 
 app = FastAPI()
 #
@@ -206,4 +209,68 @@ async def read_item(estacion: str, month: int, day: int,):
     except(Exception, psycopg2.Error) as e:
         return {'message': 'error de conexion '+str(e)}
 
+@app.get('/getEscritura/{escritura}')
+async def read_item(escritura: str):
+    # listo
+    try:
 
+        url = "http://NOT238.dyndns.org:2080/cgi-bin/exp_grales_www.exe?EXPE="+escritura+"&TIPO_USO=Consulta"
+        r = requests.get(url)
+
+        byteData = r.content
+        str1 = byteData.decode('ansi')
+        soup = BeautifulSoup(str1, "html.parser")
+        dict = []
+        # Find all table elements
+        tables = soup.find_all('table')
+
+        # Loop through the tables and print their contents
+        for table in tables:
+
+            # Get the table rows
+            rows = []
+            for tr in table.find_all('tr'):
+
+                row = []
+                for td in tr.find_all('td'):
+                    row.append(td.text.strip())
+                if row:
+                    rows.append(row)
+
+            # Print the table headers and rows
+            transposed_list = list(map(list, zip(*rows)))
+            flag = 0
+
+            for row in transposed_list:
+                result = [s for s in row if ":" in s]
+                result2 = [s for s in row if ":" not in s]
+                if flag:
+                    dict.append(result2)
+                for data in result:
+                    splitted = data.split(":")
+                    dict.append(splitted)
+                flag = 1
+
+        del dict[0]
+        del dict[0]
+        my_dict = {key: value for key, value in dict}
+        return {'EscrituraValues': my_dict}
+    except(Exception, psycopg2.Error) as e:
+        return {'message': 'error de conexion '+str(str1)}
+
+
+@app.post("/login")
+async def read_item(user: str, passwd: str):
+    # listo
+    try:
+        urlogin = "http://notdf77.dyndns.org:2080/cgi-bin/CONRTG_WWW.EXE"
+        User = {
+            "usuario": user,
+            "claveac": passwd
+        }
+        login = requests.post(urlogin, data=User)
+        byteLoginData = login.content
+        lstr = byteLoginData.decode('ansi')
+        return {lstr}
+    except(Exception, psycopg2.Error) as e:
+        return {'message': 'error de conexion '+str(lstr)}

@@ -92,7 +92,7 @@ const Regression = () => {
     }>
         {stations.map((e,index)=><option key={index} value={e.value} >{e.label}</option> )}
     </select>
-    Prediccion del dia de hoy: {yhat}
+    <span style={{backgroundColor: 'DarkTurquoise', opacity: 0.7}}>Prediccion del dia de hoy: {yhat}</span>
     <table style={{backgroundColor: 'DarkTurquoise', opacity: 0.7}}>
       {datos}
     </table>
